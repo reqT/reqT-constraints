@@ -34,7 +34,7 @@ implicit class RangeIntervalOps(ivls: Seq[Interval]) {
 
 //trait ConstraintGenerators { // mixed into reqT package object
 def vars[T <: AnyRef](vs: T *): Seq[Var] = vs.map(Var(_)).toIndexedSeq
-def vars(n: Int, prefix: String): Vector[Var] = (for (i <- 0 until n) yield Var(s"$prefix$i")).toVector
+def vars(n: Int, prefix: String): Vector[Var] = (for i <- 0 until n yield Var(s"$prefix$i")).toVector
   // def forAll[T](xs:Seq[T])(f: T => Constr) = Constraints(xs.map(f(_)).toVector)
   // def forAll[T1, T2](x1s:Seq[T1], x2s: Seq[T2])(f: (T1, T2) => Constr) = Constraints(
   //   ( for (x1 <- x1s; x2 <- x2s) yield f(x1, x2) ) .toVector

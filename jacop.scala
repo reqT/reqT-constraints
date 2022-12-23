@@ -65,7 +65,12 @@ case class Search(
 //   def minimize(v: Var): Model = searchModelAndWarnIfNoSolution(Search(Minimize(v)))
 // }
 
-extension (cs: Seq[Constr]) def solve(search: Search = Search()) = jacop.Solver(cs, search).solve
+extension (cs: Seq[Constr]) 
+  def solve(search: Search = Search()) = 
+    val result = jacop.Solver(cs, search).solve
+    if result.conclusion != SolutionFound then
+      jacop.Settings.warningPrinter(result.conclusion.toString)
+    result
   //if (r.conclusion == SolutionFound) (r.lastSolution, r) else (Map(), r) 
 
 class JacopSolutions( 
@@ -82,16 +87,30 @@ class JacopSolutions(
   def value(s: Int, v: Int): Int = toInt(domain(s,v))
   def solution(s: Int): Array[Int] = coreDomains(s).map(toInt)
   def solutionMap(s: Int): Map[Var, Int] = 
-    ( for (i <- 0 until nVariables) yield (variables(i), value(s, i)) ) .toMap
+    ( for i <- 0 until nVariables yield (variables(i), value(s, i)) ) .toMap
   def valueVector(v: Var): Vector[Int] = 
-    ( for (s <- 0 until nSolutions) yield value(s, indexOf(v)) ) .toVector   
-  def printSolutions: Unit = for (i <- 0 until nSolutions) println(s"*** Solution $i:\n" + solutionMap(i))
+    ( for s <- 0 until nSolutions yield value(s, indexOf(v)) ) .toVector   
+  def printSolutions: Unit = for i <- 0 until nSolutions do println(s"*** Solution $i:\n" + solutionMap(i))
   lazy val solutionMatrix: Array[Array[Int]] = coreDomains.slice(0,nSolutions-1).map(_.map(toInt))
   override def toString = s"Solutions([nSolutions=$nSolutions][nVariables=$nVariables])" 
 }
 
 
+
 object jacop {  
+
+  case class Config(
+      val defaultInterval: Interval = Interval(-1000, 1000),
+      val defaultSearchType: SearchType = Satisfy,
+      val defaultValueSelection: ValueSelection = IndomainRandom,
+      val defaultVariableSelection: VariableSelection = InputOrder,
+      val verbose: Boolean = false,
+      val debug: Boolean = false,
+      val warningPrinter: String => Unit = (s: String) => println("WARNING: " + s),
+  )
+  object Config:
+    given defaultConfig: Config = Config()
+
 
   object Settings {
     var defaultInterval: Interval = Interval(-1000, 1000)
@@ -187,16 +206,16 @@ value selection methods not yet implemented
     def intervals(b: Bounds): Map[Var, Seq[Interval]] = b.variables.map(v => (v, b.domain)).toMap
     def mergeIntervals(ivls1: Ivls, ivls2: Ivls): Ivls = {
       var result = ivls1
-      for ((v, ivls) <- ivls2) { 
-        if (result.isDefinedAt(v)) result += v -> (result(v) ++ ivls) 
+      for (v, ivls) <- ivls2 do { 
+        if result.isDefinedAt(v) then result += v -> (result(v) ++ ivls) 
         else result += v -> ivls 
       }
       result
     }
     def buildDomainMap(cs: Seq[Constr]): Ivls = {
       var result = collectBounds(cs).map(intervals(_)).foldLeft(Map(): Ivls)(mergeIntervals(_,_))
-      for (v <- distinctVars(cs)) {
-        if (!result.isDefinedAt(v)) result += v -> Seq(jacop. Settings.defaultInterval)
+      for v <- distinctVars(cs) do {
+        if !result.isDefinedAt(v) then result += v -> Seq(jacop.Settings.defaultInterval)
       }
       result
     }
@@ -210,7 +229,7 @@ value selection methods not yet implemented
     
     def flattenAllConstraints(cs: Seq[Constr]): Seq[Constr] = {
       def flatten(xs: Seq[Constr]): Seq[Constr] = 
-        if (xs.isEmpty) xs 
+        if xs.isEmpty then xs 
         else (xs.head match {
           //case cs: Constraints => flatten(cs.value)  ???
           case c => Seq(c)
@@ -228,10 +247,10 @@ value selection methods not yet implemented
     def toJCon(constr: Constr, store: jcore.Store, jIntVar: Map[Var, JIntVar]): jcon.Constraint = {
       def jVarArray(vs: Seq[Var]) = vs.map(v => jIntVar(v)).toArray
       constr match {
-        case AbsXeqY(x, y) => new jcon.AbsXeqY(jIntVar(x), jIntVar(y))
-        case AllDifferent(vs) => new jcon.Alldiff(jVarArray(vs))
+        case AbsXeqY(x, y) => jcon.AbsXeqY(jIntVar(x), jIntVar(y))
+        case AllDifferent(vs) => jcon.Alldiff(jVarArray(vs))
         case And(cs) => 
-          new jcon.And(cs.map(c => 
+          jcon.And(cs.map(c => 
               toJCon(c, store, jIntVar).asInstanceOf[jcon.PrimitiveConstraint]
             ).toArray
           )
@@ -256,7 +275,7 @@ value selection methods not yet implemented
         case XltY(x, y)     => jcon.XltY(jIntVar(x), jIntVar(y))
         case XneqC(x, c)    => jcon.XneqC(jIntVar(x), c)
         case XneqY(x, y)    => jcon.XneqY(jIntVar(x), jIntVar(y))
-        case XeqBool(x, b)  => jcon.XeqC(jIntVar(x), if (b) 1 else 0)
+        case XeqBool(x, b)  => jcon.XeqC(jIntVar(x), if b then 1 else 0)
         case IfThen(c1, c2) =>
           val jc = (toJCon(c1, store, jIntVar), toJCon(c2, store, jIntVar)) 
           jcon.IfThen(jc._1.asInstanceOf[jcon.PrimitiveConstraint],   jc._2.asInstanceOf[jcon.PrimitiveConstraint])
@@ -294,20 +313,20 @@ value selection methods not yet implemented
     def solutionMap(s: jcore.Store, nameToVar: Map[String, Var] ): Map[Var, Int] = 
           collectIntVars(s).filter(_.singleton).map(iv => (nameToVar(iv.id), iv.value) ).toMap
 
-    def solve: Result = if (constraints.size > 0) {
+    def solve: Result = if constraints.size > 0 then {
       val store = new jcore.Store
       val vs = distinctVars(flatConstr)
       val cs = collectConstr(flatConstr)
-      if (Settings.verbose) println("*** VARIABLES:   " + vs.mkString(","))
-      if (Settings.verbose) println("*** CONSTRAINTS: " + cs.mkString(","))
+      if Settings.verbose then println("*** VARIABLES:   " + vs.mkString(","))
+      if Settings.verbose then println("*** CONSTRAINTS: " + cs.mkString(","))
       
       val duplicates = checkUniqueToString(vs)
 
-      if (!duplicates.isEmpty) 
+      if !duplicates.isEmpty then 
         return Result(SearchFailed("Duplicate toString values of variables:" + 
           duplicates.mkString(", "))        )
 
-      if (checkIfNameExists(minimizeHelpVarName, vs)) 
+      if checkIfNameExists(minimizeHelpVarName, vs) then 
         return Result(SearchFailed("Reserved variable name not allowed:" + minimizeHelpVarName))
 
       val intVarMap: Map[Var, JIntVar] = vs.map { v => (v, varToJIntVar(v, store)) } .toMap
@@ -315,10 +334,11 @@ value selection methods not yet implemented
       searchType match
         case opt: Optimize if (!intVarMap.isDefinedAt(opt.cost)) =>
           Result(SearchFailed("Cost variable not defined:" + opt.cost))
+          
         case _ => 
           cs foreach { c => store.impose(toJCon(c, store, intVarMap)) }
-          if (Settings.debug) println(store)
-          if (!store.consistency) return Result(InconsistencyFound)
+          if Settings.debug then println(store)
+          if !store.consistency then return Result(InconsistencyFound)
           val label = new jsearch.DepthFirstSearch[JIntVar]
           
           label.setPrintInfo(Settings.verbose) 
@@ -335,21 +355,21 @@ value selection methods not yet implemented
           }
           
           val variablesToAssign: Array[JIntVar] = 
-            if (!assignOption.isDefined) collectIntVars(store) //assign all in store
+            if !assignOption.isDefined then collectIntVars(store) //assign all in store
             else assignOption.get.map(intVarMap(_)).toArray
           val selectChoicePoint = variableSelection.toJacop(store, variablesToAssign, valueSelection)
           def solutionNotFound = Result(SolutionNotFound)
           def solutionInStore = solutionMap(store, nameToVarMap(vs))
           def interruptOpt: Option[SearchInterrupt] = 
-            if (label.timeOutOccured) Some(SearchTimeOut) 
-            else if (listener.solutionLimitReached && solutionLimitOption.isDefined) 
+            if label.timeOutOccured then Some(SearchTimeOut) 
+            else if listener.solutionLimitReached && solutionLimitOption.isDefined then 
               Some(SolutionLimitReached)
             else None
           def oneResult(ok: Boolean) = 
-            if (ok) Result(SolutionFound, 1, solutionInStore, interruptOpt)  
+            if ok then Result(SolutionFound, 1, solutionInStore, interruptOpt)  
             else solutionNotFound
           def countResult(ok: Boolean, i: Int) = 
-            if (ok) Result(SolutionFound, i, solutionInStore, interruptOpt) 
+            if ok then Result(SolutionFound, i, solutionInStore, interruptOpt) 
             else solutionNotFound
           val conclusion = searchType match {
             case Satisfy => 
@@ -361,8 +381,8 @@ value selection methods not yet implemented
             case FindAll => 
               setup(searchAll = true , recordSolutions = true )
               val found = label.labeling(store, selectChoicePoint)
-              if (!found) solutionNotFound else {
-                val solutions: Solutions = new JacopSolutions(
+              if !found then solutionNotFound else {
+                val solutions: Solutions = JacopSolutions(
                       listener.getSolutions(), 
                       listener.getVariables(), 
                       listener.solutionsNo(), 
@@ -380,7 +400,7 @@ value selection methods not yet implemented
               store.impose( new jcon.XmulCeqZ(intVarMap(m.cost), -1, negCost) )
               oneResult(label.labeling(store, selectChoicePoint, negCost))
           }
-          if (Settings.verbose) println(store)
+          if Settings.verbose then println(store)
           conclusion
     } else Result(SearchFailed("Empty constraints in argument to solve")) //end def solve
     
