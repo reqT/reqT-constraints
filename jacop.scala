@@ -78,7 +78,7 @@ class JacopSolutions(
         val nSolutions: Int,
         val lastSolution: Map[Var, Int]) extends Solutions:
   lazy val nVariables = coreVariables.length
-  lazy val varMap: Map[String, Var] = lastSolution.keys.toSeq.map(v => (v.ref.toString, v)).toMap
+  lazy val varMap: Map[String, Var] = lastSolution.keys.toSeq.map(v => (v.id.toString, v)).toMap
   lazy val variables: Array[Var] = coreVariables.map(v => varMap(v.id))
   lazy val indexOf: Map[Var, Int] = variables.zipWithIndex.toMap
   private def toInt(d: jcore.Domain): Int = d.asInstanceOf[jcore.IntDomain].value
@@ -201,9 +201,9 @@ value selection methods not yet implemented
       for v <- distinctVars(cs) do
         if !result.isDefinedAt(v) then result += v -> Seq(jacop.Settings.defaultInterval)
       result
-    def nameToVarMap(vs: Seq[Var]): Map[String, Var] = vs.map(v => (v.ref.toString, v)).toMap
+    def nameToVarMap(vs: Seq[Var]): Map[String, Var] = vs.map(v => (v.id.toString, v)).toMap
     def checkUniqueToString(vs: Seq[Var]): Set[String] =
-      val strings = vs.map(_.ref.toString)
+      val strings = vs.map(_.id.toString)
       strings.diff(strings.distinct).toSet
     def checkIfNameExists(name: String, vs: Seq[Var]): Boolean = 
       vs.exists { case Var(ref) => ref.toString == name }
@@ -217,7 +217,7 @@ value selection methods not yet implemented
         } ) ++ flatten(xs.tail)
       flatten(cs)
   
-  case class Solver(constraints: Seq[Constr], search: Search) :
+  case class Solver(constraints: Seq[Constr], search: Search):
     
     import search.*
 
@@ -233,28 +233,28 @@ value selection methods not yet implemented
               toJCon(c, store, jIntVar).asInstanceOf[jcon.PrimitiveConstraint]
             ).toArray
           )
-        case IndexValue(ix, vs, v) => jcon.Element.choose(jIntVar(ix), jVarArray(vs), jIntVar(v))
-        case SumEq(vs, x)          => jcon.SumInt(vs.map(v => jIntVar(v)).toArray, "==", jIntVar(x))
-        case Count(vs, x, c)       => jcon.Count(vs.map(v => jIntVar(v)).toArray, jIntVar(x),  c)
-        case XeqC(x, c)            => jcon.XeqC(jIntVar(x), c)
-        case XeqY(x, y)            => jcon.XeqY(jIntVar(x), jIntVar(y))
-        case XdivYeqZ(x, y, z)     => jcon.XdivYeqZ(jIntVar(x), jIntVar(y), jIntVar(z))
-        case XexpYeqZ(x, y, z)     => jcon.XexpYeqZ(jIntVar(x), jIntVar(y), jIntVar(z))
-        case XmulYeqZ(x, y, z)     => jcon.XmulYeqZ(jIntVar(x), jIntVar(y), jIntVar(z))
-        case XplusYeqZ(x, y, z)    => jcon.XplusYeqZ(jIntVar(x), jIntVar(y), jIntVar(z))
-        case XplusYlteqZ(x, y, z)  => jcon.XplusYlteqZ(jIntVar(x), jIntVar(y), jIntVar(z))
-        case Distance(x, y, z)     => jcon.Distance(jIntVar(x), jIntVar(y), jIntVar(z))
-        case XgtC(x, c)     => jcon.XgtC(jIntVar(x), c)
-        case XgteqC(x, c)   => jcon.XgteqC(jIntVar(x), c)
-        case XgteqY(x, y)   => jcon.XgteqY(jIntVar(x), jIntVar(y))
-        case XgtY(x, y)     => jcon.XgtY(jIntVar(x), jIntVar(y))
-        case XltC(x, c)     => jcon.XltC(jIntVar(x), c)
-        case XlteqC(x, c)   => jcon.XlteqC(jIntVar(x), c)
-        case XlteqY(x, y)   => jcon.XlteqY(jIntVar(x), jIntVar(y))
-        case XltY(x, y)     => jcon.XltY(jIntVar(x), jIntVar(y))
-        case XneqC(x, c)    => jcon.XneqC(jIntVar(x), c)
-        case XneqY(x, y)    => jcon.XneqY(jIntVar(x), jIntVar(y))
-        case XeqBool(x, b)  => jcon.XeqC(jIntVar(x), if b then 1 else 0)
+        case Indexed(ix, vs, v)   => jcon.Element.choose(jIntVar(ix), jVarArray(vs), jIntVar(v))
+        case SumEq(vs, x)         => jcon.SumInt(vs.map(v => jIntVar(v)).toArray, "==", jIntVar(x))
+        case Count(vs, x, c)      => jcon.Count(vs.map(v => jIntVar(v)).toArray, jIntVar(x),  c)
+        case XeqC(x, c)           => jcon.XeqC(jIntVar(x), c)
+        case XeqY(x, y)           => jcon.XeqY(jIntVar(x), jIntVar(y))
+        case XdivYeqZ(x, y, z)    => jcon.XdivYeqZ(jIntVar(x), jIntVar(y), jIntVar(z))
+        case XexpYeqZ(x, y, z)    => jcon.XexpYeqZ(jIntVar(x), jIntVar(y), jIntVar(z))
+        case XmulYeqZ(x, y, z)    => jcon.XmulYeqZ(jIntVar(x), jIntVar(y), jIntVar(z))
+        case XplusYeqZ(x, y, z)   => jcon.XplusYeqZ(jIntVar(x), jIntVar(y), jIntVar(z))
+        case XplusYlteqZ(x, y, z) => jcon.XplusYlteqZ(jIntVar(x), jIntVar(y), jIntVar(z))
+        case Distance(x, y, z)    => jcon.Distance(jIntVar(x), jIntVar(y), jIntVar(z))
+        case XgtC(x, c)           => jcon.XgtC(jIntVar(x), c)
+        case XgteqC(x, c)         => jcon.XgteqC(jIntVar(x), c)
+        case XgteqY(x, y)         => jcon.XgteqY(jIntVar(x), jIntVar(y))
+        case XgtY(x, y)           => jcon.XgtY(jIntVar(x), jIntVar(y))
+        case XltC(x, c)           => jcon.XltC(jIntVar(x), c)
+        case XlteqC(x, c)         => jcon.XlteqC(jIntVar(x), c)
+        case XlteqY(x, y)         => jcon.XlteqY(jIntVar(x), jIntVar(y))
+        case XltY(x, y)           => jcon.XltY(jIntVar(x), jIntVar(y))
+        case XneqC(x, c)          => jcon.XneqC(jIntVar(x), c)
+        case XneqY(x, y)          => jcon.XneqY(jIntVar(x), jIntVar(y))
+        case XeqBool(x, b)        => jcon.XeqC(jIntVar(x), if b then 1 else 0)
         case IfThen(c1, c2) =>
           val jc = (toJCon(c1, store, jIntVar), toJCon(c2, store, jIntVar)) 
           jcon.IfThen(jc._1.asInstanceOf[jcon.PrimitiveConstraint],   jc._2.asInstanceOf[jcon.PrimitiveConstraint])
@@ -279,7 +279,7 @@ value selection methods not yet implemented
     def varToJIntVar(v: Var, s: jcore.Store): JIntVar =
       val intDom = new jcore.IntervalDomain()
       domainOf(v).foreach(ivl => intDom.addDom( new jcore.IntervalDomain(ivl.min, ivl.max)))
-      new JIntVar(s, v.ref.toString, intDom) 
+      new JIntVar(s, v.id.toString, intDom) 
 
     val minimizeHelpVarName = "_$minimize0"
 

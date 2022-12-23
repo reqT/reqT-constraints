@@ -76,7 +76,7 @@ sealed trait Optimize extends SearchType { def cost: Var }
 case class Minimize(cost: Var) extends Optimize
 case class Maximize(cost: Var) extends Optimize
 
-case class Var(ref: AnyRef): //extends DSL { 
+case class Var(id: Any): //extends DSL { 
   def ===(that: Var) = XeqY(this, that)
   def ===(const: Int) = XeqC(this, const)
   def ===(const: Boolean) = XeqBool(this, const)
@@ -223,7 +223,7 @@ case class And(constraints: Seq[Constr]) extends CompoundConstr
 case object And: 
   def apply(c1: Constr, c2: Constr) = new And(Seq(c1, c2)) 
 
-case class IndexValue(index: Var, varSeq: Seq[Var], valueAtIndex: Var) extends Constr2Seq1:
+case class Indexed(index: Var, varSeq: Seq[Var], valueAtIndex: Var) extends Constr2Seq1:
   val x = index
   val y = valueAtIndex
   val seq1 = varSeq
