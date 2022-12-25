@@ -31,16 +31,16 @@ implicit class RangeIntervalOps(ivls: Seq[Interval]):
 //}
 
 //trait ConstraintGenerators { // mixed into reqT package object
-def vars[T <: AnyRef](vs: T *): Seq[Var] = vs.map(Var(_)).toIndexedSeq
+def vars[T](vs: T *): Seq[Var] = vs.map(Var(_)).toIndexedSeq
 def vars(n: Int, prefix: String): Vector[Var] = (for i <- 0 until n yield Var(s"$prefix$i")).toVector
-  // def forAll[T](xs:Seq[T])(f: T => Constr) = Constraints(xs.map(f(_)).toVector)
-  // def forAll[T1, T2](x1s:Seq[T1], x2s: Seq[T2])(f: (T1, T2) => Constr) = Constraints(
-  //   ( for (x1 <- x1s; x2 <- x2s) yield f(x1, x2) ) .toVector
-  // )
-  // def forAll[T1, T2, T3](x1s:Seq[T1], x2s: Seq[T2], x3s: Seq[T3])(f: (T1, T2, T3) => Constr) = Constraints(
-  //   ( for (x1 <- x1s; x2 <- x2s; x3 <- x3s) yield f(x1, x2, x3) ) .toVector
-  // )
-def sumForAll[T](xs:Seq[T])(f: T => Var) = SumBuilder(xs.map(f(_)).toVector)
+// def forAll[T](xs:Seq[T])(f: T => Constr) = Constraints(xs.map(f(_)).toVector)
+// def forAll[T1, T2](x1s:Seq[T1], x2s: Seq[T2])(f: (T1, T2) => Constr) = Constraints(
+//   ( for (x1 <- x1s; x2 <- x2s) yield f(x1, x2) ) .toVector
+// )
+// def forAll[T1, T2, T3](x1s:Seq[T1], x2s: Seq[T2], x3s: Seq[T3])(f: (T1, T2, T3) => Constr) = Constraints(
+//   ( for (x1 <- x1s; x2 <- x2s; x3 <- x3s) yield f(x1, x2, x3) ) .toVector
+// )
+//def sumForAll[T](xs:Seq[T])(f: T => Var) = SumBuilder(xs.map(f(_)).toVector)
 //}
 
 case class Interval(min: Int, max: Int): //extends DSL {
