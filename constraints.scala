@@ -1,8 +1,11 @@
 package reqt 
 
-def vars[T](ids: T*): Seq[Var] = ids.map(Var(_)).toIndexedSeq
+def vars(n: Int): Seq[Var] = for i <- 0 until n yield Var(i)
+def vars(r: Range): Seq[Var] = for i <- r yield Var(i)
+def varsOf[T](ids: T*): Seq[Var] = ids.map(Var.apply)
 
-def nPrefixedVars(n: Int, prefix: String): Seq[Var] = for i <- 0 until n yield Var(s"$prefix$i")
+def varsBy[T](n: Int)(id: Int => T): Seq[Var] = for i <- 0 until n yield Var(id(i))
+def varsBy[T](r: Range)(id: Int => T): Seq[Var] = for i <- r yield Var(id(i))
 
 def forAll[T](xs: Seq[T])(f: T => Constr): Seq[Constr] = xs.map(f(_))
 
@@ -12,7 +15,8 @@ def forAll[T1, T2](x1s:Seq[T1], x2s: Seq[T2])(f: (T1, T2) => Constr): Seq[Constr
 def forAll[T1, T2, T3](x1s:Seq[T1], x2s: Seq[T2], x3s: Seq[T3])(f: (T1, T2, T3) => Constr): Seq[Constr] = 
   for (x1 <- x1s; x2 <- x2s; x3 <- x3s) yield f(x1, x2, x3)
 
-def sumForAll[T](xs:Seq[T])(f: T => Var) = SumBuilder(xs.map(f(_)).toVector)
+def sumForAll[T](xs:Seq[T])(f: T => Var) = SumBuilder(xs.map(f(_)).toVector) 
+def sumOf(xs: Var*) = SumBuilder(xs.toVector)
 
 // case class Interval(min: Int, max: Int): 
 //   if min > max then summon[SearchConfig].warn("Negative interval min > max: " + this )
@@ -21,16 +25,19 @@ def sumForAll[T](xs:Seq[T])(f: T => Var) = SumBuilder(xs.map(f(_)).toVector)
 //   def ::(b: Bounds): Bounds = Bounds(b.seq1, b.domain ++ Seq(this))
 
 extension (v: Var)
-  def ::(r: Range): Bounds = Bounds(Seq(v), Seq(r))
-  def ::(rs: Seq[Range]): Bounds = Bounds(Seq(v), rs)
+  infix def in(r: Range): Bounds = Bounds(Seq(v), Seq(r))
+  infix def in(rs: Seq[Range]): Bounds = Bounds(Seq(v), rs)
 
 extension (vs: Seq[Var])
-  def ::(r: Range): Bounds = Bounds(vs, Seq(r))
-  def ::(rs: Seq[Range]): Bounds = Bounds(vs, rs)
+  infix def in(r: Range): Bounds = Bounds(vs, Seq(r))
+  infix def in(rs: Seq[Range]): Bounds = Bounds(vs, rs)
 
 extension (b: Bounds)
-  def ::(r: Range): Bounds = b.copy(domain = b.domain :+ r)
-  def ::(rs: Seq[Range]): Bounds = b.copy(domain = b.domain ++ rs)
+  infix def in(r: Range): Bounds = b.copy(domain = b.domain :+ r)
+  infix def in(rs: Seq[Range]): Bounds = b.copy(domain = b.domain ++ rs)
+
+extension (cs: Seq[Constr])
+  def vars: Seq[Var] = cs.flatMap(_.variables)
 
 case class Var(id: Any):
   def ===(that: Var) = XeqY(this, that)

@@ -1,9 +1,7 @@
-//> using lib "org.jacop:jacop:4.9.0"
 package reqt
 
 import org.jacop.{constraints => jcon, core => jcore, search => jsearch}
-
-/**  http://www.jacop.eu/  */
+// http://www.jacop.eu/ 
 
 
 
