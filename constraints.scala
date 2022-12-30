@@ -1,55 +1,38 @@
 package reqt 
 
-import scala.language.implicitConversions
+def vars[T](ids: T*): Seq[Var] = ids.map(Var(_)).toIndexedSeq
 
-//trait ImplicitContraints { // mixed into reqT package object
-  // implicit def modelToCP(m: Model): ConstraintProblem = ConstraintProblem(m.constraints ++ m.intAttrToConstraints)
-  
-  // implicit def constrVectorToConst(cs: Vector[Constr]): Constraints = Constraints(cs)
-  // implicit def constraintsToVector(cs: Constraints): Vector[Constr] = cs.value
-  // //implicit def seqConstrToConstraints[T](cs: Seq[Constr]): Constraints = Constraints(cs.toVector)  ???
+def nPrefixedVars(n: Int, prefix: String): Seq[Var] = for i <- 0 until n yield Var(s"$prefix$i")
 
-  // implicit def constrToConstraints(c:Constr) = Constraints(c)
-  
-  // implicit def constraintsToCP(cs: Constraints): ConstraintProblem = ConstraintProblem(cs)
-  // implicit def constrVectorToCP(cs: Vector[Constr]): ConstraintProblem = ConstraintProblem(Constraints(cs))
-  
-  // implicit def attrRefToVar(ar: AttrRef[Int]): Var = Var(ar) 
-  
-  // implicit def seqAttrRefToVar(rs: Seq[AttrRef[Int]]) = rs.map(Var(_))
-implicit def rangeToInterval(r: Range): Interval = Interval(r.min, r.max)
+def forAll[T](xs: Seq[T])(f: T => Constr): Seq[Constr] = xs.map(f(_))
 
-implicit class RangeSeqOps(rs: Seq[Range]): 
-  //to enable > Var("x")::Seq(1 to 10, 12 to 15)
-  def ::(v: Var): Bounds = Bounds(Seq(v), rs.map(rangeToInterval(_)))
-  def ::(vs: Seq[Var]): Bounds = Bounds(vs, rs.map(rangeToInterval(_)))
-implicit class RangeIntervalOps(ivls: Seq[Interval]): 
-  //to enable > Var("x")::Seq(Interval(1 to 10), Interval(12 to 15))
-  def ::(v: Var): Bounds = Bounds(Seq(v), ivls)
-  def ::(vs: Seq[Var]): Bounds = Bounds(vs, ivls)
+def forAll[T1, T2](x1s:Seq[T1], x2s: Seq[T2])(f: (T1, T2) => Constr): Seq[Constr] = 
+  for (x1 <- x1s; x2 <- x2s) yield f(x1, x2)
 
-//}
+def forAll[T1, T2, T3](x1s:Seq[T1], x2s: Seq[T2], x3s: Seq[T3])(f: (T1, T2, T3) => Constr): Seq[Constr] = 
+  for (x1 <- x1s; x2 <- x2s; x3 <- x3s) yield f(x1, x2, x3)
 
-//trait ConstraintGenerators { // mixed into reqT package object
-def vars[T](vs: T *): Seq[Var] = vs.map(Var(_)).toIndexedSeq
-def vars(n: Int, prefix: String): Vector[Var] = (for i <- 0 until n yield Var(s"$prefix$i")).toVector
-// def forAll[T](xs:Seq[T])(f: T => Constr) = Constraints(xs.map(f(_)).toVector)
-// def forAll[T1, T2](x1s:Seq[T1], x2s: Seq[T2])(f: (T1, T2) => Constr) = Constraints(
-//   ( for (x1 <- x1s; x2 <- x2s) yield f(x1, x2) ) .toVector
-// )
-// def forAll[T1, T2, T3](x1s:Seq[T1], x2s: Seq[T2], x3s: Seq[T3])(f: (T1, T2, T3) => Constr) = Constraints(
-//   ( for (x1 <- x1s; x2 <- x2s; x3 <- x3s) yield f(x1, x2, x3) ) .toVector
-// )
-//def sumForAll[T](xs:Seq[T])(f: T => Var) = SumBuilder(xs.map(f(_)).toVector)
-//}
+def sumForAll[T](xs:Seq[T])(f: T => Var) = SumBuilder(xs.map(f(_)).toVector)
 
-case class Interval(min: Int, max: Int): //extends DSL {
-  //if (min > max) jacop.Settings.warningPrinter("Negative interval min > max: " + this )
-  def ::(v: Var): Bounds = Bounds(Seq(v), Seq(this))
-  def ::(vs: Seq[Var]): Bounds = Bounds(vs, Seq(this))
-  def ::(b: Bounds): Bounds = Bounds(b.seq1, b.domain ++ Seq(this))
+// case class Interval(min: Int, max: Int): 
+//   if min > max then summon[SearchConfig].warn("Negative interval min > max: " + this )
+//   def ::(v: Var): Bounds = Bounds(Seq(v), Seq(this))
+//   def ::(vs: Seq[Var]): Bounds = Bounds(vs, Seq(this))
+//   def ::(b: Bounds): Bounds = Bounds(b.seq1, b.domain ++ Seq(this))
 
-case class Var(id: Any): //extends DSL { 
+extension (v: Var)
+  def ::(r: Range): Bounds = Bounds(Seq(v), Seq(r))
+  def ::(rs: Seq[Range]): Bounds = Bounds(Seq(v), rs)
+
+extension (vs: Seq[Var])
+  def ::(r: Range): Bounds = Bounds(vs, Seq(r))
+  def ::(rs: Seq[Range]): Bounds = Bounds(vs, rs)
+
+extension (b: Bounds)
+  def ::(r: Range): Bounds = b.copy(domain = b.domain :+ r)
+  def ::(rs: Seq[Range]): Bounds = b.copy(domain = b.domain ++ rs)
+
+case class Var(id: Any):
   def ===(that: Var) = XeqY(this, that)
   def ===(const: Int) = XeqC(this, const)
   def ===(const: Boolean) = XeqBool(this, const)
@@ -84,9 +67,7 @@ object Sum:
   def apply(v: Var, vs: Var *) = SumBuilder(v +: vs.toVector)
   def apply(vs: Seq[Var]) = SumBuilder(vs.toVector)
 
-trait BoundingConstr //marker trait to enable Bounds filter in jacop.scala
-
-trait Variables: //extends DSL { 
+trait Variables: 
   def variables: Seq[Var]  
 
 trait Constr extends Variables
@@ -163,12 +144,12 @@ trait CompoundConstr1Var1 extends CompoundConstr1:
   val x: Var
   override lazy val variables: Seq[Var]  = (constraints.flatMap(_.variables) :+ x).distinct
 
-case class Bounds(seq1: Seq[Var], domain: Seq[Interval]) 
-extends ConstrSeq1 with BoundingConstr:
+case class Bounds(seq1: Seq[Var], domain: Seq[Range]) 
+extends ConstrSeq1:
   def addDomainOf(that: Bounds): Bounds = Bounds(seq1, domain ++ that.domain)
 
 object Bounds:
-  def apply(v: Var, ivls: Interval *) = new Bounds(Seq(v), ivls) 
+  def apply(v: Var, ivls: Range *) = new Bounds(Seq(v), ivls) 
   def apply(vs: Var *) = new Bounds(vs, Seq()) 
 
 case class AbsXeqY(x: Var, y: Var) extends Constr2 with PrimitiveConstr
@@ -218,8 +199,9 @@ case class IfThenBool(x: Var, y: Var, z: Var) extends Constr3 with PrimitiveCons
 
 case class Reified(c1: PrimitiveConstr, x: Var) extends  CompoundConstr1Var1 
 
-case class Rectangle(x: Var, y: Var, dx: Var, dy: Var): 
+case class Rectangle(x: Var, y: Var, dx: Var, dy: Var) extends Variables: // used in Diff2
   lazy val toVector: Vector[Var] = Vector(x, y, dx, dy)
+  lazy val variables: Seq[Var] = toVector
 
 case class Diff2(rectangles: Vector[Vector[Var]]) extends ConstrMatrix:
   lazy val matrix = rectangles     

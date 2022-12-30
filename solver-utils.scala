@@ -4,11 +4,11 @@ import org.jacop.{constraints => jcon, core => jcore, search => jsearch}
 import jcore.{IntVar => JIntVar, Var => JVar, BooleanVar => JBooleanVar}
 
 object SolverUtils:
-  type Ivls = Map[Var, Seq[Interval]]
+  type Ivls = Map[Var, Seq[Range]]
   def distinctVars(cs: Seq[Constr]): Seq[Var] = cs.map { _.variables } .flatten.distinct
   def collectBounds(cs: Seq[Constr]): Seq[Bounds] = cs collect { case b: Bounds => b }
-  def collectConstr(cs: Seq[Constr]): Seq[Constr] = cs filter { case b: BoundingConstr => false ; case _ => true }
-  def intervals(b: Bounds): Map[Var, Seq[Interval]] = b.variables.map(v => (v, b.domain)).toMap
+  def collectConstr(cs: Seq[Constr]): Seq[Constr] = cs filter { case b: Bounds => false ; case _ => true }
+  def intervals(b: Bounds): Map[Var, Seq[Range]] = b.variables.map(v => (v, b.domain)).toMap
   def mergeIntervals(ivls1: Ivls, ivls2: Ivls): Ivls =
     var result = ivls1
     for (v, ivls) <- ivls2 do 

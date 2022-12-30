@@ -7,7 +7,7 @@ case class SearchConfig(
   timeOutOption: Option[Long] = None,
   solutionLimitOption: Option[Int] = None,
   assignOption: Option[Seq[Var]] = None,
-  defaultInterval: Interval = Interval(-1000, 1000),
+  defaultInterval: Range = -1000 to 1000,
   warn: String => Unit = (s: String) => println("WARNING: " + s),
   verbose: Boolean = false,
   debug: Boolean = false,
@@ -35,11 +35,11 @@ export Conclusion.*
 
 sealed trait SearchType
 
-enum SearchFind extends SearchType: 
+enum SolutionSearch extends SearchType: 
   case Satisfy
   case CountAll
   case FindAll 
-export SearchFind.*
+export SolutionSearch.*
 
 enum Optimize extends SearchType:
   def cost: Var

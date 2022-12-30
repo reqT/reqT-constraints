@@ -61,7 +61,7 @@ object jacop:
     import search.*
     
     lazy val flatConstr = flattenAllConstraints(constraints)
-    lazy val domainOf: Map[Var, Seq[Interval]] = buildDomainMap(flatConstr)
+    lazy val domainOf: Map[Var, Seq[Range]] = buildDomainMap(flatConstr)
 
     def buildDomainMap(cs: Seq[Constr]): Ivls =
       var result = collectBounds(cs).map(intervals(_)).foldLeft(Map(): Ivls)(mergeIntervals(_,_))
