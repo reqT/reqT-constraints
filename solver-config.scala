@@ -1,7 +1,6 @@
 package reqt
 
 case class SearchConfig(
-  searchType: SearchType = Satisfy,
   valueSelection: ValueSelection = IndomainRandom,
   variableSelection: VariableSelection = InputOrder,
   timeOutOption: Option[Long] = None,

@@ -6,8 +6,8 @@ import org.jacop.{constraints => jcon, core => jcore, search => jsearch}
 
 
 extension (cs: Seq[Constr]) 
-  def solve(using cfg: SearchConfig): Result = 
-    val result = jacop.Solver(cs, cfg).solve
+  def solve(st: SearchType)(using cfg: SearchConfig): Result = 
+    val result = jacop.Solver(cs, st, cfg).solve
     if result.conclusion != SolutionFound then cfg.warn(result.conclusion.toString)
     result
 
@@ -52,11 +52,11 @@ object jacop:
   type JVar = jcore.Var
   type JBooleanVar = jcore.BooleanVar
   
-  case class Solver(constraints: Seq[Constr], search: SearchConfig):
+  case class Solver(constraints: Seq[Constr], searchType: SearchType, cfg: SearchConfig):
 
     import SolverUtils.*
 
-    import search.*
+    import cfg.*
     
     lazy val flatConstr = flattenAllConstraints(constraints)
     lazy val domainOf: Map[Var, Seq[Range]] = buildDomainMap(flatConstr)
