@@ -20,15 +20,16 @@
         ],
         "classpath": [
             "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala3-library_3/3.3.1/scala3-library_3-3.3.1.jar",
-            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jacop/jacop/4.9.0/jacop-4.9.0.jar",
-            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.10/scala-library-2.13.10.jar",
+            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jacop/jacop/4.10.0/jacop-4.10.0.jar",
+            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12.jar",
             "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/mockito/mockito-all/1.10.19/mockito-all-1.10.19.jar",
-            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.1/scala-compiler-2.13.1.jar",
+            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.12/scala-compiler-2.13.12.jar",
             "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.24/slf4j-api-1.7.24.jar",
             "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.7.24/slf4j-log4j12-1.7.24.jar",
-            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.1/scala-reflect-2.13.1.jar",
-            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/jline/jline/2.14.6/jline-2.14.6.jar",
-            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/fusesource/jansi/jansi/1.12/jansi-1.12.jar",
+            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.12/scala-reflect-2.13.12.jar",
+            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12.jar",
+            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jline/jline/3.22.0/jline-3.22.0.jar",
+            "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar",
             "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"
         ],
         "out": "/home/bjornr/git/hub/reqT/reqT-solver/.bloop/reqt-solver",
@@ -194,15 +195,16 @@
             "classpath": [
                 "/home/bjornr/git/hub/reqT/reqT-solver/.bloop/reqt-solver/scala-3/classes",
                 "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala3-library_3/3.3.1/scala3-library_3-3.3.1.jar",
-                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jacop/jacop/4.9.0/jacop-4.9.0.jar",
-                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.10/scala-library-2.13.10.jar",
+                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jacop/jacop/4.10.0/jacop-4.10.0.jar",
+                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12.jar",
                 "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/mockito/mockito-all/1.10.19/mockito-all-1.10.19.jar",
-                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.1/scala-compiler-2.13.1.jar",
+                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.12/scala-compiler-2.13.12.jar",
                 "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.24/slf4j-api-1.7.24.jar",
                 "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.7.24/slf4j-log4j12-1.7.24.jar",
-                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.1/scala-reflect-2.13.1.jar",
-                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/jline/jline/2.14.6/jline-2.14.6.jar",
-                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/fusesource/jansi/jansi/1.12/jansi-1.12.jar",
+                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.12/scala-reflect-2.13.12.jar",
+                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12.jar",
+                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jline/jline/3.22.0/jline-3.22.0.jar",
+                "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar",
                 "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"
             ]
         },
@@ -228,34 +230,34 @@
                 {
                     "organization": "org.jacop",
                     "name": "jacop",
-                    "version": "4.9.0",
+                    "version": "4.10.0",
                     "configurations": "default",
                     "artifacts": [
                         {
                             "name": "jacop",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jacop/jacop/4.9.0/jacop-4.9.0.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jacop/jacop/4.10.0/jacop-4.10.0.jar"
                         },
                         {
                             "name": "jacop",
                             "classifier": "sources",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jacop/jacop/4.9.0/jacop-4.9.0-sources.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jacop/jacop/4.10.0/jacop-4.10.0-sources.jar"
                         }
                     ]
                 },
                 {
                     "organization": "org.scala-lang",
                     "name": "scala-library",
-                    "version": "2.13.10",
+                    "version": "2.13.12",
                     "configurations": "default",
                     "artifacts": [
                         {
                             "name": "scala-library",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.10/scala-library-2.13.10.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12.jar"
                         },
                         {
                             "name": "scala-library",
                             "classifier": "sources",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.10/scala-library-2.13.10-sources.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12-sources.jar"
                         }
                     ]
                 },
@@ -279,17 +281,17 @@
                 {
                     "organization": "org.scala-lang",
                     "name": "scala-compiler",
-                    "version": "2.13.1",
+                    "version": "2.13.12",
                     "configurations": "default",
                     "artifacts": [
                         {
                             "name": "scala-compiler",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.1/scala-compiler-2.13.1.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.12/scala-compiler-2.13.12.jar"
                         },
                         {
                             "name": "scala-compiler",
                             "classifier": "sources",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.1/scala-compiler-2.13.1-sources.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.12/scala-compiler-2.13.12-sources.jar"
                         }
                     ]
                 },
@@ -330,51 +332,68 @@
                 {
                     "organization": "org.scala-lang",
                     "name": "scala-reflect",
-                    "version": "2.13.1",
+                    "version": "2.13.12",
                     "configurations": "default",
                     "artifacts": [
                         {
                             "name": "scala-reflect",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.1/scala-reflect-2.13.1.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.12/scala-reflect-2.13.12.jar"
                         },
                         {
                             "name": "scala-reflect",
                             "classifier": "sources",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.1/scala-reflect-2.13.1-sources.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.12/scala-reflect-2.13.12-sources.jar"
                         }
                     ]
                 },
                 {
-                    "organization": "jline",
+                    "organization": "io.github.java-diff-utils",
+                    "name": "java-diff-utils",
+                    "version": "4.12",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "java-diff-utils",
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12.jar"
+                        },
+                        {
+                            "name": "java-diff-utils",
+                            "classifier": "sources",
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.jline",
                     "name": "jline",
-                    "version": "2.14.6",
+                    "version": "3.22.0",
                     "configurations": "default",
                     "artifacts": [
                         {
                             "name": "jline",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/jline/jline/2.14.6/jline-2.14.6.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jline/jline/3.22.0/jline-3.22.0.jar"
                         },
                         {
                             "name": "jline",
                             "classifier": "sources",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/jline/jline/2.14.6/jline-2.14.6-sources.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/jline/jline/3.22.0/jline-3.22.0-sources.jar"
                         }
                     ]
                 },
                 {
-                    "organization": "org.fusesource.jansi",
-                    "name": "jansi",
-                    "version": "1.12",
+                    "organization": "net.java.dev.jna",
+                    "name": "jna",
+                    "version": "5.13.0",
                     "configurations": "default",
                     "artifacts": [
                         {
-                            "name": "jansi",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/fusesource/jansi/jansi/1.12/jansi-1.12.jar"
+                            "name": "jna",
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar"
                         },
                         {
-                            "name": "jansi",
+                            "name": "jna",
                             "classifier": "sources",
-                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/org/fusesource/jansi/jansi/1.12/jansi-1.12-sources.jar"
+                            "path": "/home/bjornr/.cache/coursier/v1/https/repo1.maven.org/maven2/net/java/dev/jna/jna/5.13.0/jna-5.13.0-sources.jar"
                         }
                     ]
                 },

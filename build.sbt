@@ -9,7 +9,7 @@ console / initialCommands := """import reqt.*"""
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
-libraryDependencies += "org.jacop" % "jacop" % "4.9.0" 
+libraryDependencies += "org.jacop" % "jacop" % "4.10.0" 
 
 lazy val nameOfThisBuild = "reqt-solver"
 
