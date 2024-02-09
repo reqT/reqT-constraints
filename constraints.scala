@@ -17,32 +17,32 @@ def forAll[T1, T2, T3](x1s:Seq[T1], x2s: Seq[T2], x3s: Seq[T3])(f: (T1, T2, T3) 
 
 def sumForAll[T](xs:Seq[T])(f: T => Var) = SumBuilder(xs.map(f(_)).toVector) 
 
-extension (v: Var)(using s: Store)
+extension (v: Var)(using s: ConstrStore)
   infix def in(r: Range): Bounds = Bounds(Seq(v), Seq(r))
   infix def in(rs: Seq[Range]): Bounds = Bounds(Seq(v), rs)
 
-extension (vs: Seq[Var])(using s: Store)
+extension (vs: Seq[Var])(using s: ConstrStore)
   infix def in(r: Range): Bounds = Bounds(vs, Seq(r))
   infix def in(rs: Seq[Range]): Bounds = Bounds(vs, rs)
 
-extension (b: Bounds)(using s: Store)
+extension (b: Bounds)(using s: ConstrStore)
   infix def in(r: Range): Bounds = b.copy(domain = b.domain :+ r)
   infix def in(rs: Seq[Range]): Bounds = b.copy(domain = b.domain ++ rs)
 
 extension (cs: Seq[Constr])
   def variables: Seq[Var] = cs.flatMap(_.variables)
 
-trait Store:
+trait ConstrStore:
   def add(c: Constr): Constr
   def toSeq: Seq[Constr]
   def clear(): Unit
-object Store:
-  given global: Store = ConstraintBuffer()
-  type Ctx = Store ?=> Constr
+object ConstrStore:
+  given global: ConstrStore = ConstrBuffer()
+  type Ctx = ConstrStore ?=> Constr
 
-def store(using s: Store): Store = s
+def store(using s: ConstrStore): ConstrStore = s
 
-class ConstraintBuffer extends Store:
+class ConstrBuffer extends ConstrStore:
   private val buf = collection.mutable.ListBuffer.empty[Constr]
   def add(c: Constr): Constr = { buf.append(c); c }
   def toSeq: Seq[Constr] = buf.toSeq
@@ -53,18 +53,18 @@ transparent trait HasVariables:
 
 trait Constr extends HasVariables
 
-transparent trait CanStore(using s: Store):
+transparent trait CanStore(using s: ConstrStore):
   self: Constr =>
   s.add(this)
 
-def localStore(body: Store ?=> Unit): Store = 
-  given s: Store = ConstraintBuffer()
+def constraints(body: ConstrStore ?=> Unit) = 
+  given s: ConstrStore = ConstrBuffer()
   body
   s
 
-def satisfy(using store: Store): Result = store.toSeq.solve(Satisfy)
+def satisfy(using store: ConstrStore): Result = store.toSeq.solve(Satisfy)
 
-import Store.Ctx
+import ConstrStore.Ctx
 
 case class Var(id: Any):
   def ===(that: Var): Ctx           = XeqY(this, that)
@@ -173,12 +173,12 @@ trait CompoundConstr1Var1 extends CompoundConstr1:
   val x: Var
   override lazy val variables: Seq[Var]  = (constraints.flatMap(_.variables) :+ x).distinct
 
-case class Bounds(seq1: Seq[Var], domain: Seq[Range])(using s: Store) extends ConstrSeq1, CanStore:
+case class Bounds(seq1: Seq[Var], domain: Seq[Range])(using s: ConstrStore) extends ConstrSeq1, CanStore:
   def addDomainOf(that: Bounds): Bounds = Bounds(seq1, domain ++ that.domain)
 
 object Bounds:
-  def apply(v: Var, ivls: Range *)(using s: Store) = new Bounds(Seq(v), ivls) 
-  def apply(vs: Var *)(using s: Store) = new Bounds(vs, Seq()) 
+  def apply(v: Var, ivls: Range *)(using s: ConstrStore) = new Bounds(Seq(v), ivls) 
+  def apply(vs: Var *)(using s: ConstrStore) = new Bounds(vs, Seq()) 
 
 case class AbsXeqY(x: Var, y: Var) extends Constr2, PrimitiveConstr
 
@@ -195,9 +195,9 @@ case class Indexed(index: Var, varSeq: Seq[Var], valueAtIndex: Var) extends Cons
 
 case class SumEq(seq1: Seq[Var], x: Var) extends Constr1Seq1 
 case class Count(seq1: Seq[Var], x: Var, c: Int) extends Constr1Seq1IntConst
-case class XeqC(x: Var, c: Int)(using s: Store) extends Constr1IntConst, PrimitiveConstr, CanStore 
+case class XeqC(x: Var, c: Int)(using s: ConstrStore) extends Constr1IntConst, PrimitiveConstr, CanStore 
 
-case class XeqY(x: Var, y: Var)(using s: Store) extends Constr2, PrimitiveConstr, CanStore
+case class XeqY(x: Var, y: Var)(using s: ConstrStore) extends Constr2, PrimitiveConstr, CanStore
 
 case class XdivYeqZ(x: Var, y: Var, z: Var) extends Constr3, PrimitiveConstr
 case class XexpYeqZ(x: Var, y: Var, z: Var) extends Constr3, PrimitiveConstr 
@@ -226,7 +226,7 @@ case class IfThenElse(c1: PrimitiveConstr, c2: PrimitiveConstr, c3: PrimitiveCon
 
 case class IfThenBool(x: Var, y: Var, z: Var) extends Constr3, PrimitiveConstr
 
-case class Reified(c1: PrimitiveConstr, x: Var)(using s: Store) extends CompoundConstr1Var1, CanStore
+case class Reified(c1: PrimitiveConstr, x: Var)(using s: ConstrStore) extends CompoundConstr1Var1, CanStore
 
 case class Rectangle(x: Var, y: Var, dx: Var, dy: Var) extends HasVariables: // used in Diff2
   lazy val toVector: Vector[Var] = Vector(x, y, dx, dy)
