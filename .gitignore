@@ -1,6 +1,7 @@
 bin/
 target/
 .bsp
+.bloop
 .metals
 .scala-build
 .vscode
