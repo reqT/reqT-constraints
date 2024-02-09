@@ -11,9 +11,9 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
 libraryDependencies += "org.jacop" % "jacop" % "4.10.0" 
 
-lazy val nameOfThisBuild = "reqt-solver"
+lazy val nameOfThisBuild = "reqtsolver"
 
-lazy val `reqt-solver` = (project in file("."))
+lazy val `reqtsolver` = (project in file("."))
   .settings(
     name := nameOfThisBuild,
     scalacOptions := List("-encoding", "utf8", "-Werror", "-deprecation", "-unchecked")
