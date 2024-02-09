@@ -7,7 +7,7 @@ import org.jacop.{constraints => jcon, core => jcore, search => jsearch}
 
 extension (cs: Seq[Constr]) 
   def solve(st: SearchType)(using cfg: SearchConfig): Result = 
-    val result = jacop.Solver(cs, st, cfg).solve
+    val result = jacop.JacopSolver(cs, st, cfg).solve
     if result.conclusion != SolutionFound then cfg.warn(result.conclusion.toString)
     result
 
@@ -52,7 +52,7 @@ object jacop:
   type JVar = jcore.Var
   type JBooleanVar = jcore.BooleanVar
   
-  case class Solver(constraints: Seq[Constr], searchType: SearchType, cfg: SearchConfig):
+  class JacopSolver(constraints: Seq[Constr], searchType: SearchType, cfg: SearchConfig):
 
     import SolverUtils.*
 
@@ -183,6 +183,6 @@ object jacop:
           conclusion
     else Result(SearchFailed("Empty constraints in argument to solve")) //end def solve
     
-  end Solver
+  end JacopSolver
 end jacop
 
