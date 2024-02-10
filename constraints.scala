@@ -1,5 +1,7 @@
 package reqt 
 
+import scala.collection.mutable
+
 def vars(n: Int): Seq[Var] = for i <- 0 until n yield Var(i)
 def vars(r: Range): Seq[Var] = for i <- r yield Var(i)
 def varIds[T](ids: T*): Seq[Var] = ids.map(Var.apply)
@@ -32,21 +34,18 @@ extension (b: Bounds)(using s: ConstrStore)
 extension (cs: Seq[Constr])
   def variables: Seq[Var] = cs.flatMap(_.variables)
 
-trait ConstrStore:
-  def add(c: Constr): Constr
-  def toSeq: Seq[Constr]
-  def clear(): Unit
-object ConstrStore:
-  given global: ConstrStore = ConstrBuffer()
-  type Ctx = ConstrStore ?=> Constr
-
 def store(using s: ConstrStore): ConstrStore = s
 
-class ConstrBuffer extends ConstrStore:
-  private val buf = collection.mutable.ListBuffer.empty[Constr]
-  def add(c: Constr): Constr = { buf.append(c); c }
-  def toSeq: Seq[Constr] = buf.toSeq
-  def clear(): Unit = buf.clear()
+object ConstrStore:
+  //given global: ConstrStore = ConstrBuffer()
+  type Ctx = ConstrStore ?=> Constr
+
+class ConstrStore:
+  val buffer = mutable.Buffer.empty[Constr]
+  def add(c: Constr): Constr = { buffer.append(c); c }
+  def toSeq: Seq[Constr] = buffer.toSeq
+  def clear(): Unit = buffer.clear()
+  def satisfy: Result = jacop.solve(toSeq)(Satisfy)
 
 transparent trait HasVariables: 
   def variables: Seq[Var]  
@@ -57,12 +56,10 @@ transparent trait CanStore(using s: ConstrStore):
   self: Constr =>
   s.add(this)
 
-def constraints(body: ConstrStore ?=> Unit) = 
-  given s: ConstrStore = ConstrBuffer()
+def constraints(body: ConstrStore ?=> Unit): ConstrStore = 
+  given s: ConstrStore = new ConstrStore
   body
   s
-
-def satisfy(using store: ConstrStore): Result = store.toSeq.solve(Satisfy)
 
 import ConstrStore.Ctx
 
