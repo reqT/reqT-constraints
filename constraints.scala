@@ -30,7 +30,6 @@ object constraints:
   trait Constr extends HasVariables
 
   case class Var(id: Any):
-    def as[T](fromId: Any => T): T = fromId(id)
     def ===(y: Var): XeqY                  = XeqY(this, y)
     def ===(value: Int): XeqC              = XeqC(this, value)
     def ===(value: Boolean): XeqBool       = XeqBool(this, value)
