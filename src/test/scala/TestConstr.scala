@@ -1,6 +1,6 @@
 package reqt
 
-import constr.*
+import constraints.*
 
 class TestConstr extends munit.FunSuite:
 
@@ -28,6 +28,6 @@ class TestConstr extends munit.FunSuite:
       Var("x") > 41,
       Var("x") < 43,
     )
-    import JacopInterface.*
+    import solver.*
     val result = cs.satisfy
     assert(result.lastSolution(Var("x")) == 42) 

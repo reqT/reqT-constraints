@@ -4,7 +4,7 @@ ThisBuild / scalaVersion := "3.3.1"
 
 ThisBuild / organization := "io.github.reqt"
 
-console / initialCommands := """import reqt.constr.*"""
+console / initialCommands := """import reqt.constraints.*"""
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 

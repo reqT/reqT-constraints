@@ -1,6 +1,6 @@
 package reqt
 
-import constr.*  // depends on reqt.constr 
+import constraints.*  // depends on reqt.constr 
 import org.jacop // depends on https://github.com/radsz/jacop/
 
 
