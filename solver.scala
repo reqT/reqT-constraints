@@ -40,7 +40,9 @@ object solver:
     lastSolution: Map[Var, Int] = Map[Var, Int](),
     interruptOption: Option[Interrupt] = None,
     solutionsOption: Option[Solutions] = None
-  )  
+  ):
+    def get(v: Var): Option[Int] = lastSolution.get(v)
+
 
   enum Interrupt { case SearchTimeOut, SolutionLimitReached }
   export Interrupt.*
