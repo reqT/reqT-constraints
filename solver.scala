@@ -1,11 +1,13 @@
 package reqt
 
-import org.jacop.{constraints => jcon, core => jcore, search => jsearch}
-// http://www.jacop.eu/ 
+import constr.*  // depends on reqt.constr 
+import org.jacop // depends on https://github.com/radsz/jacop/
 
-import constr.*
 
-object jacop:  
+/** An interface to the JaCoP solver http://www.jacop.eu  */
+object solver:  
+  import jacop.{constraints => jcon, core => jcore, search => jsearch}
+
   extension (cs: Seq[Constr]) 
     def solve(st: SearchType)(using cfg: SearchConfig): Result = 
       val result = new JacopSolver(cs, st, cfg).solve
@@ -32,14 +34,12 @@ object jacop:
   object SearchConfig:
     given defaultSearchConfig: SearchConfig = SearchConfig()
 
-  export SearchConfig.defaultSearchConfig
-
   case class Result(
     conclusion: Conclusion, 
     solutionCount: Int = 0, 
     lastSolution: Map[Var, Int] = Map[Var, Int](),
     interruptOption: Option[Interrupt] = None,
-    solutionsOption: Option[jacop.Solutions] = None
+    solutionsOption: Option[Solutions] = None
   )  
 
   enum Interrupt { case SearchTimeOut, SolutionLimitReached }
@@ -393,5 +393,5 @@ object jacop:
     else Result(SearchFailed("Empty constraints in argument to solve")) //end def solve
     
   end JacopSolver // class
-end jacop
+end solver
 
