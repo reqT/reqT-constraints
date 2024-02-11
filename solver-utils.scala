@@ -2,6 +2,7 @@ package reqt
 
 import org.jacop.{constraints => jcon, core => jcore, search => jsearch}
 import jcore.{IntVar => JIntVar, Var => JVar, BooleanVar => JBooleanVar}
+import constr.*
 
 object SolverUtils:
   type Ivls = Map[Var, Seq[Range]]

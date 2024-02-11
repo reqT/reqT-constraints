@@ -3,12 +3,15 @@ package reqt
 import org.jacop.{constraints => jcon, core => jcore, search => jsearch}
 // http://www.jacop.eu/ 
 
-object jacop:  
+import constr.*
 
+object jacop:  
   extension (cs: Seq[Constr]) def solve(st: SearchType)(using cfg: SearchConfig): Result = 
     val result = JacopSolver(cs, st, cfg).solve
     if result.conclusion != SolutionFound then cfg.warn(result.conclusion.toString)
     result
+
+  
 
   class Solutions( 
     val coreDomains: Array[Array[jcore.Domain]], 

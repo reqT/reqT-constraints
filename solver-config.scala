@@ -1,5 +1,7 @@
 package reqt
 
+import constr.*
+
 case class SearchConfig(
   valueSelection: ValueSelection = IndomainRandom,
   variableSelection: VariableSelection = InputOrder,
