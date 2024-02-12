@@ -41,7 +41,14 @@ object solver:
     interruptOption: Option[Interrupt] = None,
     solutionsOption: Option[Solutions] = None
   ):
-    def get(v: Var): Option[Int] = lastSolution.get(v)
+    def last(v: Var): Option[v.Value] = lastSolution.get(v).map(v.fromInt)
+
+    def single(v: Var): Option[v.Value] = 
+      if solutionCount == 1 && lastSolution.isDefinedAt(v) then Some(v.fromInt(lastSolution(v)))
+      else None
+
+    def all(v: Var): Seq[v.Value] = solutionsOption.map(ss => ss.allValuesOf(v).map(v.fromInt)).getOrElse(Seq())
+  end Result
 
 
   enum Interrupt { case SearchTimeOut, SolutionLimitReached }
@@ -174,7 +181,7 @@ object solver:
       strings.diff(strings.distinct).toSet
     
     def checkIfNameExists(name: String, vs: Seq[Var]): Boolean = 
-      vs.exists { case Var(ref) => ref.toString == name }
+      vs.exists { case v: Var => v.id.toString == name }
 
     def flattenAllConstraints(cs: Seq[Constr]): Seq[Constr] =
       def flatten(xs: Seq[Constr]): Seq[Constr] = 
@@ -275,6 +282,9 @@ object solver:
     def buildDomainMap(cs: Seq[Constr]): Ivls =
       var result = collectBounds(cs).map(intervals(_)).foldLeft(Map(): Ivls)(mergeIntervals(_,_))
       for v <- distinctVars(cs) do
+        v match
+          case EnumVar(id, values) => result += v -> (result.get(v).getOrElse(Seq()) :+ values.indices)
+          case _ => ()
         if !result.isDefinedAt(v) then result += v -> Seq(defaultInterval)
       result
 

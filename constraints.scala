@@ -4,12 +4,12 @@ package reqt
 object constraints: 
   def constraints(cs: Constr*): Seq[Constr] = cs.toSeq 
 
-  def vars(n: Int): Seq[Var] = for i <- 0 until n yield Var(i)
-  def vars(r: Range): Seq[Var] = for i <- r yield Var(i)
-  def varIds[T](ids: T*): Seq[Var] = ids.map(Var.apply)
+  def intVars(n: Int): Seq[Var] = for i <- 0 until n yield IntVar(i)
+  def intVars(r: Range): Seq[Var] = for i <- r yield IntVar(i)
+  def intVarIds[T](ids: T*): Seq[Var] = ids.map(IntVar.apply)
 
-  def varsBy[T](n: Int)(id: Int => T): Seq[Var] = for i <- 0 until n yield Var(id(i))
-  def varsBy[T](r: Range)(id: Int => T): Seq[Var] = for i <- r yield Var(id(i))
+  def varsBy[T](n: Int)(id: Int => T): Seq[Var] = for i <- 0 until n yield IntVar(id(i))
+  def varsBy[T](r: Range)(id: Int => T): Seq[Var] = for i <- r yield IntVar(id(i))
 
   def forAll[T](xs: Seq[T])(f: T => Constr): Seq[Constr] = xs.map(f(_))
 
@@ -29,7 +29,12 @@ object constraints:
 
   trait Constr extends HasVariables
 
-  case class Var(id: Any):
+  trait Var:
+    type Id
+    type Value
+    def id: Id
+    def fromInt(i: Int): Value
+    def toInt(value: Value): Int
     def ===(y: Var): XeqY                  = XeqY(this, y)
     def ===(value: Int): XeqC              = XeqC(this, value)
     def ===(value: Boolean): XeqBool       = XeqBool(this, value)
@@ -54,8 +59,24 @@ object constraints:
     
     def *(y: Var) = MulBuilder(this, y)  
     def +(y: Var) = PlusBuilder(this, y)  
-  end Var
-    
+
+  extension (i: Int) def toValueOf(v: Var): v.Value = v.fromInt(i)
+  case class IntVar[T](id: T) extends Var:
+    type Id = T
+    type Value = Int
+    override def fromInt(i: Int): Int = i
+    override def toInt(value: Int): Int = value
+  end IntVar
+
+  case class EnumVar[T, U](id: T, values: Seq[U]) extends Var:
+    type Id = T
+    type Value = U
+    override def fromInt(i: Int): U = values(i)
+    lazy val valueToIndex: Map[U, Int] = values.zipWithIndex.toMap
+    override def toInt(value: U): Int = valueToIndex(value)
+  object EnumVar:
+    def apply[T, U](id: T, values: Array[U]): EnumVar[T, U] = new EnumVar(id, values.toSeq)
+
   case class SumBuilder(vs: Vector[Var]): 
     def ===(y: Var): SumEq = SumEq(vs, y)
  
