@@ -2,6 +2,7 @@ package reqt
 
 import constraints.*
 import solver.*
+import jacop.*
 
 class TestConstr extends munit.FunSuite:
 
