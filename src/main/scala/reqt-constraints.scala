@@ -152,6 +152,7 @@ object constraints:
     val c1: Constr
     val c2: Constr
     val constrSeq = Seq(c1, c2)
+    
   trait CompoundConstr3 extends CompoundConstr:
     val c1: Constr
     val c2: Constr
