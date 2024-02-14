@@ -1,10 +1,10 @@
-ThisBuild / version      := "4.0.0-M4"
+ThisBuild / version      := "1.0.0-RC1"
 
 ThisBuild / scalaVersion := "3.3.1"
 
 ThisBuild / organization := "io.github.reqt"
 
-console / initialCommands := "import reqt.constraints.*, reqt.solver.*, reqt.jacop.*"
+console / initialCommands := "import reqt.constraints.*, reqt.solver.*"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
