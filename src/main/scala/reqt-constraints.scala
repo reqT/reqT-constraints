@@ -59,6 +59,11 @@ object constraints:
     
     def *(y: Var) = MulBuilder(this, y)  
     def +(y: Var) = PlusBuilder(this, y)  
+  
+  object Var:
+    def apply[T](id: T): IntVar[T] = IntVar(id)
+    def apply[T, U](id: T, values: Seq[U]) = EnumVar(id, values)
+    def apply[T, U](id: T, values: Array[U]) = EnumVar(id, values)
 
   extension (i: Int) def toValueOf(v: Var): v.Value = v.fromInt(i)
   case class IntVar[T](id: T) extends Var:
