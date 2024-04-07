@@ -1,5 +1,13 @@
 # reqT-constraints
 
+**THIS REPO IS DEPRECATED AND WILL BE DELETED**
+
+The api is included in https://github.com/reqT/reqT-lang
+
+---
+
+**OLD README:**
+
 This repo is a zero-dependency [Scala](https://www.scala-lang.org/)-embedded [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) for expressing [constraint satisfaction problem](https://en.wikipedia.org/wiki/Constraint_satisfaction_problem). It has a permissive license. 
 
 I can be used together with `reqT-lang` (permissive license) and `reqT-jacop` (AGPL-v3).
